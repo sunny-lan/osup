@@ -26,10 +26,10 @@ namespace osu.Framework.MathUtils
         /// the control points until their approximation error vanishes below a given threshold.
         /// </summary>
         /// <returns>A list of vectors representing the piecewise-linear approximation.</returns>
-        public static List<Vector2> ApproximateBezier(ReadOnlySpan<Vector2> controlPoints)
+        public static List<Vector2> ApproximateBezier(List<Vector2> controlPoints)
         {
             List<Vector2> output = new List<Vector2>();
-            int count = controlPoints.Length;
+            int count = controlPoints.Count;
 
             if (count == 0)
                 return output;
@@ -86,16 +86,16 @@ namespace osu.Framework.MathUtils
         /// Creates a piecewise-linear approximation of a Catmull-Rom spline.
         /// </summary>
         /// <returns>A list of vectors representing the piecewise-linear approximation.</returns>
-        public static List<Vector2> ApproximateCatmull(ReadOnlySpan<Vector2> controlPoints)
+        public static List<Vector2> ApproximateCatmull(List<Vector2> controlPoints)
         {
-            var result = new List<Vector2>((controlPoints.Length - 1) * catmull_detail * 2);
+            var result = new List<Vector2>((controlPoints.Count - 1) * catmull_detail * 2);
 
-            for (int i = 0; i < controlPoints.Length - 1; i++)
+            for (int i = 0; i < controlPoints.Count - 1; i++)
             {
                 var v1 = i > 0 ? controlPoints[i - 1] : controlPoints[i];
                 var v2 = controlPoints[i];
-                var v3 = i < controlPoints.Length - 1 ? controlPoints[i + 1] : v2 + v2 - v1;
-                var v4 = i < controlPoints.Length - 2 ? controlPoints[i + 2] : v3 + v3 - v2;
+                var v3 = i < controlPoints.Count - 1 ? controlPoints[i + 1] : v2 + v2 - v1;
+                var v4 = i < controlPoints.Count - 2 ? controlPoints[i + 2] : v3 + v3 - v2;
 
                 for (int c = 0; c < catmull_detail; c++)
                 {
@@ -111,7 +111,7 @@ namespace osu.Framework.MathUtils
         /// Creates a piecewise-linear approximation of a circular arc curve.
         /// </summary>
         /// <returns>A list of vectors representing the piecewise-linear approximation.</returns>
-        public static List<Vector2> ApproximateCircularArc(ReadOnlySpan<Vector2> controlPoints)
+        public static List<Vector2> ApproximateCircularArc(List<Vector2> controlPoints)
         {
             Vector2 a = controlPoints[0];
             Vector2 b = controlPoints[1];
@@ -121,7 +121,7 @@ namespace osu.Framework.MathUtils
             float bSq = (a - c).LengthSquared();
             float cSq = (a - b).LengthSquared();
 
-            // If we have a degenerate triangle where a side-length is almost zero, then give up and fall
+            // If we have a degenerate triangle where a side-Count is almost zero, then give up and fall
             // back to a more numerically stable method.
             if (Precision.AlmostEquals(aSq, 0) || Precision.AlmostEquals(bSq, 0) || Precision.AlmostEquals(cSq, 0))
                 return new List<Vector2>();
@@ -188,9 +188,9 @@ namespace osu.Framework.MathUtils
         /// Basically, returns the input.
         /// </summary>
         /// <returns>A list of vectors representing the piecewise-linear approximation.</returns>
-        public static List<Vector2> ApproximateLinear(ReadOnlySpan<Vector2> controlPoints)
+        public static List<Vector2> ApproximateLinear(List<Vector2> controlPoints)
         {
-            var result = new List<Vector2>(controlPoints.Length);
+            var result = new List<Vector2>(controlPoints.Count);
 
             foreach (var c in controlPoints)
                 result.Add(c);
@@ -202,7 +202,7 @@ namespace osu.Framework.MathUtils
         /// Creates a piecewise-linear approximation of a lagrange polynomial.
         /// </summary>
         /// <returns>A list of vectors representing the piecewise-linear approximation.</returns>
-        public static List<Vector2> ApproximateLagrangePolynomial(ReadOnlySpan<Vector2> controlPoints)
+        public static List<Vector2> ApproximateLagrangePolynomial(List<Vector2> controlPoints)
         {
             // TODO: add some smarter logic here, chebyshev nodes?
             const int num_steps = 51;
@@ -214,7 +214,7 @@ namespace osu.Framework.MathUtils
             float minX = controlPoints[0].X;
             float maxX = controlPoints[0].X;
 
-            for (int i = 1; i < controlPoints.Length; i++)
+            for (int i = 1; i < controlPoints.Count; i++)
             {
                 minX = Math.Min(minX, controlPoints[i].X);
                 maxX = Math.Max(maxX, controlPoints[i].X);

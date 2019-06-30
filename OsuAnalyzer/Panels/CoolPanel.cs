@@ -16,7 +16,8 @@ namespace OsuAnalyzer
 {
     public interface Drawable
     {
-        bool draw(Graphics g, long time);
+        void draw(Graphics g, long time);
+        bool isOver(long time);
     }
 
     public class CoolPanel : Panel
@@ -36,15 +37,11 @@ namespace OsuAnalyzer
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.Black);
 
-            //osupixel converted code here:
-
             float limW = ClientSize.Width;
             float limH = ClientSize.Height;
             float nw = Math.Min(limW, limH * wToH);
             float nh = nw / wToH;
             g.ScaleTransform(nw / 512, nh / 384);
-
-            g.DrawRectangle(pn, 0, 0, 512, 384);
 
             if (ct != -1)
             {
@@ -65,19 +62,18 @@ namespace OsuAnalyzer
           
             while (idx>=0 )
             {
-                bool dead = false;
                 var obj = objs[idx];
+                Drawable vw=null;
                 if (obj is Circle)
-                {
-                    CircleView cv = new CircleView
-                    {
-                        mw = mw,
-                        obj = obj as Circle,
-                    };
+                    vw = new CircleView(obj as Circle, mw);
 
-                    dead|=cv.draw(g, time);
-                }
-                if (dead) break; 
+                if (obj is Spinner)
+                    vw = new SpinnerView(obj as Spinner, mw);
+
+                if (obj is Slider)
+                    vw = new SliderView(obj as Slider, mw);
+                if (vw.isOver(time)) break;
+                vw.draw(g, time);
                 idx--;
             }
         }

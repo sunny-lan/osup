@@ -8,41 +8,37 @@ using System.Threading.Tasks;
 
 namespace OsuAnalyzer.Drawables
 {
-    public class CircleView : Drawable
+    public class CircleView : HitobjView<Circle>
     {
-        public MapWrap mw;
-        public Circle obj;
-
         private const float cw=10, aw=2;
 
-        public bool draw(Graphics g, long time)
+        public CircleView(Circle obj, MapWrap mw) : base(obj, mw)
         {
+        }
 
-            double st = obj.StartTime-mw.preempt;
-            double a = (time - st)/mw.fade_in;
-            a = Math.Max(Math.Min(a,1), 0);
+        public override void draw(Graphics g, long time)
+        {
+            int a = getAlphaInt(time);
 
             float rr = mw.radius-cw/2;
             Color c = Color.White;
             var delta = Math.Abs(time - obj.StartTime);
-            if (delta <= mw.hit300)
-                c = Color.Blue;
-            else if (delta <= mw.hit100)
-                c = Color.Green;
-            else if (delta <= mw.hit50)
-                c = Color.Yellow;
-            else
-                c = Color.Red;
-            Pen cp = new Pen(Color.FromArgb((int)(a*255), c), cw);
+            //if (delta <= mw.hit300)
+            //    c = Color.Blue;
+            //else if (delta <= mw.hit100)
+            //    c = Color.Green;
+            //else if (delta <= mw.hit50)
+            //    c = Color.Yellow;
+            //else
+            //    c = Color.Red;
+            Pen cp = new Pen(Color.FromArgb(a, c), cw);
 
             g.DrawEllipse(cp, obj.Position.X-rr, obj.Position.Y-rr,rr*2, rr*2);
 
             //approach circle
-            Pen ap = new Pen(Color.FromArgb((int)(a * 255), Color.White), aw);
-            rr = (float)(mw.radius + mw.radius * Math.Max(0, obj.StartTime-time) / mw.preempt - aw / 2);
+            Pen ap = new Pen(Color.FromArgb(a, Color.White), aw);
+            rr = (float)(mw.radius + mw.radius*2 * Math.Max(0, obj.StartTime-time) / mw.preempt - aw / 2);
             g.DrawEllipse(ap, obj.Position.X - rr, obj.Position.Y - rr, rr * 2, rr * 2);
-
-            return time > obj.EndTime + 500;
         }
     }
 }

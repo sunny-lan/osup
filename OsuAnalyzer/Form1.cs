@@ -78,7 +78,7 @@ namespace OsuAnalyzer
 
         private void showMapInfo(DbBeatmap map, List<Score> scores)
         {
-            mapInfo.Text = $"MapInfo{nl}"+
+            mapInfo.Text = $"MapInfo{nl}" +
                $"Song title: {map.Title}{nl}" +
                $"Difficulty: {map.Difficulty}{nl}" +
                $"Hash: {map.MD5Hash}{nl}";
@@ -105,9 +105,7 @@ namespace OsuAnalyzer
                 $"Hash: {score.ReplayMD5Hash}{nl}" +
                 $"Date achieved: {score.ScoreTimestamp} (UTC {score.ScoreTimestamp.ToFileTimeUtc()}){nl}";
         }
-
-        private Beatmap currentMap;
-        private Replay currentReplay;
+        
         private MapWrap mw;
 
         private void loadReplay_Click(object sender, EventArgs e)
@@ -121,13 +119,21 @@ namespace OsuAnalyzer
             var tp = scoreDb.Scores[mapSelect.SelectedIndex];
             var map = mapsByHash[tp.Item1];
             var score = tp.Item2[replaySelect.SelectedIndex];
-            var bmPath = Path.Combine(osuRoot, "Songs", map.FolderName, map.FileName);
-            var rpPath = Path.Combine(osuRoot, @"Data\r", $"{tp.Item1}-{score.ScoreTimestamp.ToFileTimeUtc()}.osr");
-            currentMap = Parser.ParseBeatmap(bmPath);
-            currentReplay = Parser.ParseReplay(rpPath);
-            mw = new MapWrap(currentMap, currentReplay);
+            mw = new MapWrap(map, score, osuRoot);
             coolPanel.loadReplay(mw);
             scrubber1.loadReplay(mw);
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Space)
+            {
+                scrubber1.Playing = !scrubber1.Playing;
+                return true;    // indicate that you handled this keystroke
+            }
+
+            // Call the base class
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

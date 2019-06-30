@@ -1,13 +1,20 @@
-﻿using OsuParsers.Beatmaps;
+﻿using NAudio.Wave;
+using OsuParsers;
+using OsuParsers.Beatmaps;
+using OsuParsers.Database.Objects;
 using OsuParsers.Replays;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OsuAnalyzer
 {
+
+    
+
     public class MapWrap
     {
         public float radius;
@@ -16,11 +23,20 @@ namespace OsuAnalyzer
         public double preempt, fade_in;
         public Beatmap map;
         public Replay rp;
+        public string osuRoot;
+        public Score sc;
+        public DbBeatmap dmp;
 
-        public MapWrap(Beatmap map, Replay rp)
+        public MapWrap(DbBeatmap dmp, Score sc, string osuRoot)
         {
-            this.map = map;
-            this.rp = rp;
+            this.sc = sc;
+            this.dmp = dmp;
+            this.osuRoot = osuRoot;
+
+            var bmPath = Path.Combine(osuRoot, "Songs", dmp.FolderName, dmp.FileName);
+            var rpPath = Path.Combine(osuRoot, @"Data\r", $"{dmp.MD5Hash}-{sc.ScoreTimestamp.ToFileTimeUtc()}.osr");
+            map = Parser.ParseBeatmap(bmPath);
+            rp= Parser.ParseReplay(rpPath);
 
             radius = 54.4f - 4.48f * map.DifficultySection.CircleSize;
 
@@ -57,7 +73,7 @@ namespace OsuAnalyzer
             int lo = 0, hi = list.Count ;
             while (lo < hi)
             {
-                int m = (hi + lo) / 2;  // this might overflow; be careful.
+                int m = (hi + lo) / 2;  
                 if (!pred(list[m])) lo = m + 1;
                 else hi = m;
             }

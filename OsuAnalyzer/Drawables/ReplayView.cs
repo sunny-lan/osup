@@ -3,6 +3,7 @@ using OsuParsers.Replays.Objects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace OsuAnalyzer.Drawables
             return Color.FromArgb(a, ans);
         }
 
-        public bool draw(Graphics g, long time)
+        public void draw(Graphics g, long time)
         {
             var frames = r.ReplayFrames;
             int idx = Util.LowerBound(frames, x =>
@@ -70,8 +71,8 @@ namespace OsuAnalyzer.Drawables
                     rr = (int)Math.Min(50, Math.Max(0, time - lt));
                     pp = new Pen(getCol(ldb, rdb, alpha), 2);
                 }
-
-                g.DrawLine(new Pen(getCol(lhold, rhold, alpha), 3), a.X , a.Y , b.X  , b.Y);
+                var xd = new Pen(getCol(lhold, rhold, alpha), 3);
+                g.DrawLine(xd, a.X , a.Y , b.X  , b.Y);
                 idx++;
             }
             if (cf != null)
@@ -79,7 +80,11 @@ namespace OsuAnalyzer.Drawables
                 if(dn)
                 g.DrawEllipse(pp, cf.X - rr, cf.Y - rr, rr * 2, rr * 2);
             }
-            return true;
+        }
+
+        public bool isOver(long time)
+        {
+            return false;
         }
     }
 }

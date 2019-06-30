@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -34,13 +35,13 @@ namespace osu.Framework.MathUtils
         /// </summary>
         /// <param name="points">An array of coordinates. No two x should be the same.</param>
         /// <param name="time">The x coordinate to calculate the y coordinate for.</param>
-        public static double Lagrange(ReadOnlySpan<Vector2> points, double time)
+        public static double Lagrange(List<Vector2> points, double time)
         {
-            if (points == null || points.Length == 0)
+            if (points == null || points.Count == 0)
                 throw new ArgumentException($"{nameof(points)} must contain at least one point");
 
             double sum = 0;
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < points.Count; i++)
                 sum += points[i].Y * LagrangeBasis(points, i, time);
             return sum;
         }
@@ -51,10 +52,10 @@ namespace osu.Framework.MathUtils
         /// <param name="points">An array of coordinates. No two x should be the same.</param>
         /// <param name="base">The index inside the coordinate array which polynomial to compute.</param>
         /// <param name="time">The x coordinate to calculate the basis polynomial for.</param>
-        public static double LagrangeBasis(ReadOnlySpan<Vector2> points, int @base, double time)
+        public static double LagrangeBasis(List<Vector2> points, int @base, double time)
         {
             double product = 1;
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < points.Count; i++)
                 if (i != @base)
                     product *= (time - points[i].X) / (points[@base].X - points[i].X);
             return product;
@@ -64,9 +65,9 @@ namespace osu.Framework.MathUtils
         /// Calculates the Barycentric weights for a Lagrange polynomial for a given set of coordinates. Can be used as a helper function to compute a Lagrange polynomial repeatedly.
         /// </summary>
         /// <param name="points">An array of coordinates. No two x should be the same.</param>
-        public static double[] BarycentricWeights(ReadOnlySpan<Vector2> points)
+        public static double[] BarycentricWeights(List<Vector2> points)
         {
-            int n = points.Length;
+            int n = points.Count;
             double[] w = new double[n];
 
             for (int i = 0; i < n; i++)
@@ -87,17 +88,17 @@ namespace osu.Framework.MathUtils
         /// <param name="points">An array of coordinates. No two x should be the same.</param>
         /// <param name="weights">An array of precomputed barycentric weights.</param>
         /// <param name="time">The x coordinate to calculate the basis polynomial for.</param>
-        public static double BarycentricLagrange(ReadOnlySpan<Vector2> points, double[] weights, double time)
+        public static double BarycentricLagrange(List<Vector2> points, double[] weights, double time)
         {
-            if (points == null || points.Length == 0)
+            if (points == null || points.Count == 0)
                 throw new ArgumentException($"{nameof(points)} must contain at least one point");
-            if (points.Length != weights.Length)
+            if (points.Count != weights.Length)
                 throw new ArgumentException($"{nameof(points)} must contain exactly as many items as {nameof(weights)}");
 
             double numerator = 0;
             double denominator = 0;
 
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < points.Count; i++)
             {
                 // while this is not great with branch prediction, it prevents NaN at control point X coordinates
                 if (time == points[i].X)

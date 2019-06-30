@@ -40,9 +40,10 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(932, 12);
+            this.refresh.Location = new System.Drawing.Point(1073, 661);
+            this.refresh.Margin = new System.Windows.Forms.Padding(2);
             this.refresh.Name = "refresh";
-            this.refresh.Size = new System.Drawing.Size(156, 36);
+            this.refresh.Size = new System.Drawing.Size(200, 29);
             this.refresh.TabIndex = 1;
             this.refresh.Text = "Refresh replays";
             this.refresh.UseVisualStyleBackColor = true;
@@ -51,48 +52,51 @@
             // mapSelect
             // 
             this.mapSelect.FormattingEnabled = true;
-            this.mapSelect.ItemHeight = 16;
-            this.mapSelect.Location = new System.Drawing.Point(932, 54);
+            this.mapSelect.Location = new System.Drawing.Point(1073, 44);
+            this.mapSelect.Margin = new System.Windows.Forms.Padding(2);
             this.mapSelect.Name = "mapSelect";
-            this.mapSelect.Size = new System.Drawing.Size(156, 180);
+            this.mapSelect.Size = new System.Drawing.Size(200, 147);
             this.mapSelect.TabIndex = 2;
             this.mapSelect.SelectedIndexChanged += new System.EventHandler(this.mapSelect_SelectedIndexChanged);
             // 
             // replaySelect
             // 
             this.replaySelect.FormattingEnabled = true;
-            this.replaySelect.ItemHeight = 16;
-            this.replaySelect.Location = new System.Drawing.Point(1094, 54);
+            this.replaySelect.Location = new System.Drawing.Point(1073, 349);
+            this.replaySelect.Margin = new System.Windows.Forms.Padding(2);
             this.replaySelect.Name = "replaySelect";
-            this.replaySelect.Size = new System.Drawing.Size(156, 180);
+            this.replaySelect.Size = new System.Drawing.Size(200, 147);
             this.replaySelect.TabIndex = 3;
             this.replaySelect.SelectedIndexChanged += new System.EventHandler(this.replaySelect_SelectedIndexChanged);
             // 
             // replayInfo
             // 
-            this.replayInfo.Location = new System.Drawing.Point(932, 367);
+            this.replayInfo.Location = new System.Drawing.Point(1073, 500);
+            this.replayInfo.Margin = new System.Windows.Forms.Padding(2);
             this.replayInfo.Multiline = true;
             this.replayInfo.Name = "replayInfo";
             this.replayInfo.ReadOnly = true;
-            this.replayInfo.Size = new System.Drawing.Size(318, 125);
+            this.replayInfo.Size = new System.Drawing.Size(200, 157);
             this.replayInfo.TabIndex = 5;
             this.replayInfo.Text = "-";
             // 
             // mapInfo
             // 
-            this.mapInfo.Location = new System.Drawing.Point(932, 249);
+            this.mapInfo.Location = new System.Drawing.Point(1073, 195);
+            this.mapInfo.Margin = new System.Windows.Forms.Padding(2);
             this.mapInfo.Multiline = true;
             this.mapInfo.Name = "mapInfo";
             this.mapInfo.ReadOnly = true;
-            this.mapInfo.Size = new System.Drawing.Size(318, 112);
+            this.mapInfo.Size = new System.Drawing.Size(200, 150);
             this.mapInfo.TabIndex = 4;
             this.mapInfo.Text = "-";
             // 
             // loadReplay
             // 
-            this.loadReplay.Location = new System.Drawing.Point(1094, 12);
+            this.loadReplay.Location = new System.Drawing.Point(1073, 11);
+            this.loadReplay.Margin = new System.Windows.Forms.Padding(2);
             this.loadReplay.Name = "loadReplay";
-            this.loadReplay.Size = new System.Drawing.Size(156, 36);
+            this.loadReplay.Size = new System.Drawing.Size(200, 29);
             this.loadReplay.TabIndex = 6;
             this.loadReplay.Text = "Load replay";
             this.loadReplay.UseVisualStyleBackColor = true;
@@ -100,23 +104,26 @@
             // 
             // scrubber1
             // 
-            this.scrubber1.Location = new System.Drawing.Point(12, 697);
+            this.scrubber1.Location = new System.Drawing.Point(9, 663);
+            this.scrubber1.Margin = new System.Windows.Forms.Padding(2);
             this.scrubber1.Name = "scrubber1";
-            this.scrubber1.Size = new System.Drawing.Size(1238, 33);
+            this.scrubber1.Playing = false;
+            this.scrubber1.Size = new System.Drawing.Size(1060, 27);
             this.scrubber1.TabIndex = 7;
             // 
             // coolPanel
             // 
-            this.coolPanel.Location = new System.Drawing.Point(12, 12);
+            this.coolPanel.Location = new System.Drawing.Point(9, 11);
+            this.coolPanel.Margin = new System.Windows.Forms.Padding(2);
             this.coolPanel.Name = "coolPanel";
-            this.coolPanel.Size = new System.Drawing.Size(914, 679);
+            this.coolPanel.Size = new System.Drawing.Size(863, 648);
             this.coolPanel.TabIndex = 0;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1261, 742);
+            this.ClientSize = new System.Drawing.Size(1284, 701);
             this.Controls.Add(this.scrubber1);
             this.Controls.Add(this.loadReplay);
             this.Controls.Add(this.replayInfo);
@@ -125,8 +132,10 @@
             this.Controls.Add(this.mapSelect);
             this.Controls.Add(this.refresh);
             this.Controls.Add(this.coolPanel);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ResumeLayout(false);
             this.PerformLayout();
 
