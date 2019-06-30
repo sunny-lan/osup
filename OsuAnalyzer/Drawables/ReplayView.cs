@@ -1,19 +1,12 @@
-﻿using OsuParsers.Replays;
-using OsuParsers.Replays.Objects;
+﻿using OsuParsers.Replays.Objects;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace OsuAnalyzer.Drawables
 {
     public class ReplayView : Drawable
     {
-        public Replay r;
+        public MapAnalysisContext mw;
         public long preTime = 1000, postTime = 0;
 
         private Color getCol(bool r, bool l, int a = 255)
@@ -26,17 +19,14 @@ namespace OsuAnalyzer.Drawables
             else if (l)
                 ans = Color.Green;
             else
-                ans = Color.White;
+                ans = Color.Pink;
             return Color.FromArgb(a, ans);
         }
 
         public void draw(Graphics g, long time)
         {
-            var frames = r.ReplayFrames;
-            int idx = Util.LowerBound(frames, x =>
-              x.Time >= time - preTime
-            );
-            //TODO proper following cursor circle
+            var frames = mw.rp.ReplayFrames;
+            int idx = mw.getRpIdx(time);
             ReplayFrame cf=null;
             var mnDelt = long.MaxValue;
             int rr=-1;
@@ -68,23 +58,26 @@ namespace OsuAnalyzer.Drawables
                     cf = b;
                     dn = lhold || rhold;
                     mnDelt = delta;
-                    rr = (int)Math.Min(50, Math.Max(0, time - lt));
+                    rr = (int)Math.Min(mw.radius/3, Math.Max(0, time - lt));
                     pp = new Pen(getCol(ldb, rdb, alpha), 2);
                 }
+
+                //draw actual trail
                 var xd = new Pen(getCol(lhold, rhold, alpha), 3);
                 g.DrawLine(xd, a.X , a.Y , b.X  , b.Y);
                 idx++;
             }
             if (cf != null)
             {
-                if(dn)
-                g.DrawEllipse(pp, cf.X - rr, cf.Y - rr, rr * 2, rr * 2);
+                //draw hitcircle
+                if (dn)
+                    g.DrawEllipse(pp, cf.X - rr, cf.Y - rr, rr * 2, rr * 2);
             }
         }
 
-        public bool isOver(long time)
+        public long deathTime()
         {
-            return false;
+            return long.MaxValue;
         }
     }
 }

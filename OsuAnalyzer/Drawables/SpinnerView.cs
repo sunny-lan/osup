@@ -1,10 +1,6 @@
 ﻿using OsuParsers.Beatmaps.Objects;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OsuAnalyzer.Drawables
 {
@@ -12,7 +8,7 @@ namespace OsuAnalyzer.Drawables
     {
         private Pen pn = new Pen(Color.White, 5);
 
-        public SpinnerView(Spinner obj, MapWrap mw) : base(obj, mw)
+        public SpinnerView(Spinner obj, MapAnalysisContext mw) : base(obj, mw)
         {
         }
 
@@ -24,9 +20,9 @@ namespace OsuAnalyzer.Drawables
             g.DrawEllipse(pn, cx - r, cy - r, r * 2, r * 2);
         }
 
-        public override bool isOver(long time)
+        public override long deathTime()
         {
-            return time >= obj.EndTime;
+            return obj.EndTime;
         }
     }
 }

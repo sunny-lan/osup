@@ -1,8 +1,6 @@
 ﻿using OsuParsers;
-using OsuParsers.Beatmaps;
 using OsuParsers.Database;
 using OsuParsers.Database.Objects;
-using OsuParsers.Replays;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,9 +9,9 @@ using System.Windows.Forms;
 namespace OsuAnalyzer
 {
 
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             loadOsuDb();
@@ -106,7 +104,7 @@ namespace OsuAnalyzer
                 $"Date achieved: {score.ScoreTimestamp} (UTC {score.ScoreTimestamp.ToFileTimeUtc()}){nl}";
         }
         
-        private MapWrap mw;
+        private MapAnalysisContext mw;
 
         private void loadReplay_Click(object sender, EventArgs e)
         {
@@ -119,7 +117,7 @@ namespace OsuAnalyzer
             var tp = scoreDb.Scores[mapSelect.SelectedIndex];
             var map = mapsByHash[tp.Item1];
             var score = tp.Item2[replaySelect.SelectedIndex];
-            mw = new MapWrap(map, score, osuRoot);
+            mw = new MapAnalysisContext(map, score, osuRoot);
             coolPanel.loadReplay(mw);
             scrubber1.loadReplay(mw);
         }
@@ -127,13 +125,14 @@ namespace OsuAnalyzer
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Space)
-            {
                 scrubber1.Playing = !scrubber1.Playing;
-                return true;    // indicate that you handled this keystroke
-            }
-
-            // Call the base class
-            return base.ProcessCmdKey(ref msg, keyData);
+            else if (keyData == Keys.Left)
+                scrubber1.step(-1);
+            else if (keyData == Keys.Right)
+                scrubber1.step(1);
+            else
+                return base.ProcessCmdKey(ref msg, keyData);
+            return true;    // indicate that you handled this keystroke
         }
     }
 }

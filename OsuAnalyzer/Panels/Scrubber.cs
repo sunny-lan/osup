@@ -1,11 +1,8 @@
 ﻿using NAudio.Wave;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OsuAnalyzer.Panels
@@ -14,7 +11,7 @@ namespace OsuAnalyzer.Panels
 
     public class Scrubber : Panel
     {
-        public MapWrap mw;
+        public MapAnalysisContext mw;
 
         private long time;
         public event SeekEvt onSeek;
@@ -70,19 +67,18 @@ namespace OsuAnalyzer.Panels
 
         private void PlayTimer_Tick(object sender, EventArgs e)
         {
-            time = (long)(DateTime.Now - lstPlay).TotalMilliseconds+lstTime;
+            time = (long)(DateTime.Now - lstPlay).TotalMilliseconds + lstTime;
             onSeek?.Invoke(time);
             Invalidate();
         }
 
-        public void loadReplay(MapWrap mw)
+        public void loadReplay(MapAnalysisContext mw)
         {
             this.mw = mw;
-            time = 0;
 
             loadAudio();
 
-            Invalidate();
+            seek(0);
         }
 
         public Scrubber()
@@ -115,19 +111,38 @@ namespace OsuAnalyzer.Panels
         protected override void OnMouseDown(MouseEventArgs e)
         {
             mouseDown = true;
-            Playing = false;
         }
 
         private void updateTime(MouseEventArgs e)
         {
-            if (mouseDown && mw != null)
+            if (mouseDown)
             {
                 float cursorX = Math.Max(0, Math.Min(e.X, Width));
-                time = (long)(cursorX * audioLen / Width);
-                onSeek?.Invoke(time);
-                Invalidate();
+                seek((long)(cursorX * audioLen / Width));
             }
+        }
 
+        public void seek(long time)
+        {
+            if (mw == null) return;
+            Playing = false;
+            this.time = time;
+            onSeek?.Invoke(time);
+            Invalidate();
+        }
+
+        long zoom = 10;
+
+        public void step(int amt)
+        {
+            if (mw == null) return;
+            seek(time + amt*zoom);
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            if (e.Delta > 0) step(-1);
+            else if (e.Delta < 0) step(1);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -146,7 +161,6 @@ namespace OsuAnalyzer.Panels
         {
             this.SuspendLayout();
             this.ResumeLayout(false);
-
         }
     }
 }

@@ -1,19 +1,17 @@
 ﻿using OsuParsers.Beatmaps.Objects;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OsuAnalyzer.Drawables
 {
     public class CircleView : HitobjView<Circle>
     {
-        private const float cw=10, aw=2;
+        private float cw, aw;
 
-        public CircleView(Circle obj, MapWrap mw) : base(obj, mw)
+        public CircleView(Circle obj, MapAnalysisContext mw) : base(obj, mw)
         {
+            cw = mw.th.circleBodyWidth;
+            aw = mw.th.approachCircleWidth;
         }
 
         public override void draw(Graphics g, long time)
@@ -21,22 +19,29 @@ namespace OsuAnalyzer.Drawables
             int a = getAlphaInt(time);
 
             float rr = mw.radius-cw/2;
-            Color c = Color.White;
-            var delta = Math.Abs(time - obj.StartTime);
-            //if (delta <= mw.hit300)
-            //    c = Color.Blue;
-            //else if (delta <= mw.hit100)
-            //    c = Color.Green;
-            //else if (delta <= mw.hit50)
-            //    c = Color.Yellow;
-            //else
-            //    c = Color.Red;
-            Pen cp = new Pen(Color.FromArgb(a, c), cw);
 
+            //draw body
+            Pen cp = new Pen(Color.FromArgb(a, mw.th.circleBody), cw);
             g.DrawEllipse(cp, obj.Position.X-rr, obj.Position.Y-rr,rr*2, rr*2);
 
+            //draw outline
+            Pen cd = new Pen(Color.FromArgb(a, mw.th.circleOutline), 3);
+            rr = mw.radius - mw.th.circleOutlineWidth / 2;
+            g.DrawEllipse(cd, obj.Position.X - rr, obj.Position.Y - rr, rr * 2, rr * 2);
+
             //approach circle
-            Pen ap = new Pen(Color.FromArgb(a, Color.White), aw);
+            Color c = Color.White;
+            var delta = Math.Abs(time - obj.StartTime);
+            if (delta <= mw.hit300)
+                c = mw.th.hit300;
+            else if (delta <= mw.hit100)
+                c = mw.th.hit100;
+            else if (delta <= mw.hit50)
+                c = mw.th.hit50;
+            else
+                c = mw.th.miss;
+
+            Pen ap = new Pen(Color.FromArgb(a, c), aw);
             rr = (float)(mw.radius + mw.radius*2 * Math.Max(0, obj.StartTime-time) / mw.preempt - aw / 2);
             g.DrawEllipse(ap, obj.Position.X - rr, obj.Position.Y - rr, rr * 2, rr * 2);
         }

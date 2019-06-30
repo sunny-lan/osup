@@ -1,18 +1,14 @@
 ﻿using OsuParsers.Beatmaps.Objects;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OsuAnalyzer.Drawables
 {
     public abstract class HitobjView<T>:Drawable where T:HitObject
     {
         protected T obj;
-        protected MapWrap mw;
-        public HitobjView(T obj, MapWrap mw)
+        protected MapAnalysisContext mw;
+        public HitobjView(T obj, MapAnalysisContext mw)
         {
             this.obj = obj;
             this.mw = mw;
@@ -20,16 +16,17 @@ namespace OsuAnalyzer.Drawables
 
         public double getAlpha(long time)
         {
-
             double st = obj.StartTime - mw.preempt;
             double a = (time - st) / mw.fade_in;
-            double fadeOut =1- (time - obj.EndTime)/mw.hit50;
+            var dt = deathTime();
+            double fadeOut =1- (time-obj.EndTime)/Math.Max(0.1,dt-obj.EndTime);
+            //Console.WriteLine($"k={this.GetType()} t={time} f={fadeOut}");
             return Math.Min(Math.Max(Math.Min(a, fadeOut), 0), 1);
         }
 
-        public virtual bool isOver(long time)
+        public virtual long deathTime()
         {
-            return time > obj.EndTime + mw.hit50;
+            return (long)(obj.EndTime + mw.hit50);
         }
 
         public int getAlphaInt(long time)

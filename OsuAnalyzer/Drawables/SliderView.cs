@@ -3,12 +3,11 @@ using OsuParsers.Beatmaps.Objects;
 using OsuParsers.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OsuAnalyzer.Drawables
 {
@@ -17,12 +16,12 @@ namespace OsuAnalyzer.Drawables
         private List<Vector2> approx;
         private CircleView initCircle;
 
-        public SliderView(Slider obj, MapWrap mw):base(obj, mw)
+        public SliderView(Slider obj, MapAnalysisContext mw):base(obj, mw)
         {
-
+            obj.EndTime = obj.StartTime + (obj.EndTime - obj.StartTime) * obj.Repeats;
             initCircle = new CircleView(new Circle(
                 obj.Position,
-                obj.StartTime, obj.EndTime,
+                obj.StartTime, obj.StartTime,
                 obj.HitSound, null, obj.IsNewCombo, obj.ComboOffset
             ), mw);
 
@@ -39,6 +38,7 @@ namespace OsuAnalyzer.Drawables
                 approx = PathApproximator.ApproximateLinear(sld);
             if (value.CurveType == CurveType.PerfectCurve)
                 approx = PathApproximator.ApproximateCircularArc(sld);
+            Debug.Assert(approx.Count > 0, "Approximation of slider failed");
         }
 
         private  const float fc = 5;
@@ -47,10 +47,10 @@ namespace OsuAnalyzer.Drawables
 
         public override void draw(Graphics g, long time)
         {
-            var pn = new Pen(Color.FromArgb(getAlphaInt(time), Color.Gray), mw.radius * 2);
+            var pn = new Pen(Color.FromArgb(getAlphaInt(time)/2, Color.Gray), mw.radius * 2);
             pn.StartCap = LineCap.Round;
             pn.EndCap = LineCap.Round;
-            var pn2 = new Pen(Color.Black, mw.radius * 2-10);
+            var pn2 = new Pen(Color.FromArgb(getAlphaInt(time), Color.Black), mw.radius * 2-10);
             pn2.StartCap = LineCap.Round;
             pn2.EndCap = LineCap.Round;
             for (int i = 1; i < approx.Count; i++)
@@ -65,25 +65,32 @@ namespace OsuAnalyzer.Drawables
                 var b = approx[i];
                 g.DrawLine(pn2, a.X, a.Y, b.X, b.Y);
             }
+            var loli = approx.Count-1  ;
             double progress = (time - obj.StartTime) / (double)(obj.EndTime - obj.StartTime);
-            if(progress>=0 && progress < 1) { 
-                int ree = (int)(progress * (approx.Count-1));
-                var a = approx[ree];
-                float rr = 2 * mw.radius - fc / 2;
-                if (obj.CurveType == CurveType.Linear)
+            if(progress>=0 && progress < 1) {
+                double boost = progress * loli * obj.Repeats;
+                int ree = (int)boost;
+                int cnt = ree / loli;
+                int bee=ree- cnt * loli;
+                Vector2 a, b;
+                if (cnt % 2 == 0)
                 {
-                    var b = approx[ree + 1];
-                    double sub = ree / (approx.Count - 1);
-                    double f = progress - sub;
-                    float x = (float)(b.X * f + a.X * (1 - f));
-                    float y = (float)(b.Y * f + a.Y * (1 - f));
-
-                    g.DrawEllipse(fp, x - rr, y - rr, rr * 2, rr * 2);
+                    a = approx[bee];
+                    b = approx[bee + 1];
                 }
                 else
                 {
-                    g.DrawEllipse(fp, a.X - rr, a.Y - rr, rr * 2, rr * 2);
+                    a = approx[approx.Count- bee - 1];
+                    b = approx[approx.Count- bee - 2];
                 }
+
+                float rr = 2 * mw.radius - fc / 2;
+                double f =boost- ree;
+                float x = (float)(b.X * f + a.X * (1 - f));
+                float y = (float)(b.Y * f + a.Y * (1 - f));
+
+                g.DrawEllipse(fp, x - rr, y - rr, rr * 2, rr * 2);
+               
             }
 
             initCircle.draw(g, time);
