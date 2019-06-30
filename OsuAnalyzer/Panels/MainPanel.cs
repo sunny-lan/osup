@@ -1,4 +1,4 @@
-﻿using OsuAnalyzer.Drawables;
+﻿using OsuAnalyzer.HitObjects;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -47,15 +47,12 @@ namespace OsuAnalyzer
         }
         
         private MapAnalysisContext mw;
-        private ReplayView rv;
+        private ReplayP rv;
 
         private void drawHit(Graphics g, long time)
         {
-            var objs = mw.mp.HitObjects;
-            int idx = Util.LowerBound(objs, x =>
-                x.StartTime-mw.preempt > time
-            )-1 ;
-            idx = Math.Max(idx,0);
+            var objs = mw.bm.HitObjects;
+            int idx = mw.bmIdx(time);
             while (idx>=0 && mw.objs[idx].deathTime()>time)
             {
                 mw.objs[idx].draw(g, time);
@@ -75,7 +72,7 @@ namespace OsuAnalyzer
         public void loadReplay(MapAnalysisContext mw)
         {
             this.mw = mw;
-            rv = new ReplayView {
+            rv = new ReplayP {
                 mw = mw,
             };
         }

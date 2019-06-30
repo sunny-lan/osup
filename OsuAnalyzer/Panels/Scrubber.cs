@@ -95,7 +95,7 @@ namespace OsuAnalyzer.Panels
             Graphics g = e.Graphics;
             if (mw == null)
             {
-                g.DrawString("No replay loaded", drawFont, Brushes.DarkRed, 0, 0);
+                g.DrawString("No replay loaded",drawFont, Brushes.DarkRed, 0, 0);
             }
             else
             {

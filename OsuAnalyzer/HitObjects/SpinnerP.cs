@@ -1,19 +1,21 @@
 ﻿using OsuParsers.Beatmaps.Objects;
+using OsuParsers.Replays.Objects;
 using System;
 using System.Drawing;
 
-namespace OsuAnalyzer.Drawables
+namespace OsuAnalyzer.HitObjects
 {
-    public class SpinnerView:HitobjView<Spinner>
+    public class SpinnerP:HitObjectP<Spinner>
     {
         private Pen pn = new Pen(Color.White, 5);
 
-        public SpinnerView(Spinner obj, MapAnalysisContext mw) : base(obj, mw)
+        public SpinnerP(Spinner obj, MapAnalysisContext mw) : base(obj, mw)
         {
         }
 
         public override void draw(Graphics g, long time)
         {
+            base.draw(g, time);
             float cx = 512 / 2, cy=384/2;
             long a = Math.Max(0,obj.EndTime - time), b = obj.EndTime - obj.StartTime;
             float r = (384/2 - 20)*a/b;
@@ -23,6 +25,12 @@ namespace OsuAnalyzer.Drawables
         public override long deathTime()
         {
             return obj.EndTime;
+        }
+
+        public override Judgement judge(ReplayFrame cf, bool keyDown, bool hit, TimingPoint currentTiming)
+        {
+            if (cf.Time >= obj.StartTime) return new Judgement.Good();
+            return null;
         }
     }
 }

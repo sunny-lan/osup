@@ -1,6 +1,7 @@
 ﻿using osu.Framework.MathUtils;
 using OsuParsers.Beatmaps.Objects;
 using OsuParsers.Enums;
+using OsuParsers.Replays.Objects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,17 +10,17 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 
-namespace OsuAnalyzer.Drawables
+namespace OsuAnalyzer.HitObjects
 {
-    public class SliderView : HitobjView<Slider>
+    public class SliderP : HitObjectP<Slider>
     {
         private List<Vector2> approx;
-        private CircleView initCircle;
+        private CircleP initCircle;
 
-        public SliderView(Slider obj, MapAnalysisContext mw):base(obj, mw)
+        public SliderP(Slider obj, MapAnalysisContext mw):base(obj, mw)
         {
             obj.EndTime = obj.StartTime + (obj.EndTime - obj.StartTime) * obj.Repeats;
-            initCircle = new CircleView(new Circle(
+            initCircle = new CircleP(new Circle(
                 obj.Position,
                 obj.StartTime, obj.StartTime,
                 obj.HitSound, null, obj.IsNewCombo, obj.ComboOffset
@@ -47,6 +48,7 @@ namespace OsuAnalyzer.Drawables
 
         public override void draw(Graphics g, long time)
         {
+            base.draw(g, time);
             var pn = new Pen(Color.FromArgb(getAlphaInt(time)/2, Color.Gray), mw.radius * 2);
             pn.StartCap = LineCap.Round;
             pn.EndCap = LineCap.Round;
@@ -96,5 +98,9 @@ namespace OsuAnalyzer.Drawables
             initCircle.draw(g, time);
         }
 
+        public override Judgement judge(ReplayFrame cf, bool keyDown, bool hit, TimingPoint currentTiming)
+        {
+            return new Judgement.Good();
+        }
     }
 }

@@ -121,7 +121,7 @@ namespace osu.Framework.MathUtils
             float bSq = (a - c).LengthSquared();
             float cSq = (a - b).LengthSquared();
 
-            // If we have a degenerate triangle where a side-Count is almost zero, then give up and fall
+            //TODO If we have a degenerate triangle where a side-Count is almost zero, then give up and fall
             // back to a more numerically stable method.
            // if (Precision.AlmostEquals(aSq, 0) || Precision.AlmostEquals(bSq, 0) || Precision.AlmostEquals(cSq, 0))
            //     return new List<Vector2>();
@@ -132,7 +132,7 @@ namespace osu.Framework.MathUtils
 
             float sum = s + t + u;
 
-            // If we have a degenerate triangle with an almost-zero size, then give up and fall
+            //TODO If we have a degenerate triangle with an almost-zero size, then give up and fall
             // back to a more numerically stable method.
            // if (Precision.AlmostEquals(sum, 0))
             //    return new List<Vector2>();

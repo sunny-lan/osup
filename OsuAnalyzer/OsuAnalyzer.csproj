@@ -68,15 +68,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Drawables\CircleView.cs" />
-    <Compile Include="Drawables\HitobjView.cs" />
-    <Compile Include="Drawables\SliderView.cs" />
-    <Compile Include="Drawables\SpinnerView.cs" />
-    <Compile Include="MapAnalysis.cs" />
+    <Compile Include="HitObjects\CircleP.cs" />
+    <Compile Include="HitObjects\HitObjectP.cs" />
+    <Compile Include="HitObjects\SliderP.cs" />
+    <Compile Include="HitObjects\SpinnerP.cs" />
+    <Compile Include="Analysis\Judgements.cs" />
+    <Compile Include="Analysis\MapAnalysis.cs" />
+    <Compile Include="Theme.cs" />
     <Compile Include="Panels\MainPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Drawables\ReplayView.cs" />
+    <Compile Include="HitObjects\ReplayP.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,5 +123,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

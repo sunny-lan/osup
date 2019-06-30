@@ -2,9 +2,9 @@
 using System;
 using System.Drawing;
 
-namespace OsuAnalyzer.Drawables
+namespace OsuAnalyzer.HitObjects
 {
-    public class ReplayView : Drawable
+    public class ReplayP : Drawable
     {
         public MapAnalysisContext mw;
         public long preTime = 1000, postTime = 0;
@@ -26,7 +26,7 @@ namespace OsuAnalyzer.Drawables
         public void draw(Graphics g, long time)
         {
             var frames = mw.rp.ReplayFrames;
-            int idx = mw.getRpIdx(time);
+            int idx = mw.rpIdx(time);
             ReplayFrame cf=null;
             var mnDelt = long.MaxValue;
             int rr=-1;
@@ -52,6 +52,8 @@ namespace OsuAnalyzer.Drawables
                 {
                     lt = b.Time;
                 }
+
+                //TODO show side thing
 
                 if (delta <= mnDelt)
                 {   
