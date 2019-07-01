@@ -64,7 +64,7 @@ namespace OsuAnalyzer.HitObjects
 
         public override void draw(Graphics g, long time)
         {
-            if(judgement!=null )
+            if(judgement!=null && (judgement is Judgement.Bad.NoClick || time>=judgement.time ))
             g.DrawString(judgement.GetType().Name, mw.th.debugFont, new SolidBrush(Color.FromArgb(
                 getAlphaInt(time),
                 Color.White

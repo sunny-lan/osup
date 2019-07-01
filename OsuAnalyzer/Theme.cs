@@ -16,6 +16,10 @@ namespace OsuAnalyzer.Drawing
 
         public Font debugFont = new Font("Arial", 16);
 
+        public Pen cursor = new Pen(Color.White, 3);
+        public Pen badIndicator=new Pen(Color.Red, 2);
+        public Pen okIndicator=new Pen(Color.FromArgb(100,Color.Yellow), 2);
+
         //TODO move everything into theme
     }
 }

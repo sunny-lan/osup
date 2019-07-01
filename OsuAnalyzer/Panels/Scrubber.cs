@@ -86,23 +86,34 @@ namespace OsuAnalyzer.Panels
             DoubleBuffered = true;
         }
 
-        private static Pen cursor = new Pen(Color.White, 3);
-
         Font drawFont = new Font("Arial", 16);
 
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+            g.Clear(Color.Black);
             if (mw == null)
             {
                 g.DrawString("No replay loaded",drawFont, Brushes.DarkRed, 0, 0);
             }
             else
             {
-                g.Clear(Color.Black);
+                float cursorX;
 
-                float cursorX = time *Width/ audioLen;
-                g.DrawLine(cursor, cursorX, 0, cursorX, Height);
+                foreach (var ok in mw.okJudgements)
+                {
+                    cursorX = timeToCursor(ok.time);
+                    g.DrawLine(mw.th.okIndicator, cursorX, 0, cursorX, Height);
+                }
+
+                foreach (var bad in mw.badJudgements)
+                {
+                    cursorX = timeToCursor(bad.time);
+                    g.DrawLine(mw.th.badIndicator, cursorX, 0, cursorX, Height);
+                }
+
+                cursorX = timeToCursor(time);
+                g.DrawLine(mw.th.cursor, cursorX, 0, cursorX, Height);
             }
         }
 
@@ -117,8 +128,7 @@ namespace OsuAnalyzer.Panels
         {
             if (mouseDown)
             {
-                float cursorX = Math.Max(0, Math.Min(e.X, Width));
-                seek((long)(cursorX * audioLen / Width));
+                seek(cursorToTime(e.X));
             }
         }
 
@@ -129,6 +139,17 @@ namespace OsuAnalyzer.Panels
             this.time = time;
             onSeek?.Invoke(time);
             Invalidate();
+        }
+
+        private long cursorToTime(float cursorX)
+        {
+            cursorX = Math.Max(0, Math.Min(cursorX, Width));
+            return (long)(cursorX * audioLen / Width);
+        }
+
+        private float timeToCursor(long time)
+        {
+            return time * Width / (float)audioLen;
         }
 
         long zoom = 10;

@@ -37,6 +37,7 @@ namespace OsuAnalyzer.HitObjects
             {
                 var a = frames[idx];
                 var b = frames[idx + 1];
+                
                 bool lda = (a.StandardKeys & OsuParsers.Enums.StandardKeys.K1) > 0;
                 bool rda = (a.StandardKeys & OsuParsers.Enums.StandardKeys.K2) > 0;
                 bool ldb = (b.StandardKeys & OsuParsers.Enums.StandardKeys.K1) > 0;

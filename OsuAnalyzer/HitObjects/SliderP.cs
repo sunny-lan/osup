@@ -42,17 +42,16 @@ namespace OsuAnalyzer.HitObjects
             Debug.Assert(approx.Count > 0, "Approximation of slider failed");
         }
 
-        private  const float fc = 5;
+        private const float fc = 5;
         private static Pen fp = new Pen(Color.White, fc);
         
 
         public override void draw(Graphics g, long time)
         {
-            base.draw(g, time);
-            var pn = new Pen(Color.FromArgb(getAlphaInt(time)/2, Color.Gray), mw.radius * 2);
+            var pn = new Pen(Color.FromArgb(getAlphaInt(time)/2, Color.Gray), (float)mw.radius * 2);
             pn.StartCap = LineCap.Round;
-            pn.EndCap = LineCap.Round;
-            var pn2 = new Pen(Color.FromArgb(getAlphaInt(time), Color.Black), mw.radius * 2-10);
+            pn.EndCap = LineCap.Round; 
+            var pn2 = new Pen(Color.FromArgb(getAlphaInt(time), Color.Black), (float)mw.radius * 2-10);
             pn2.StartCap = LineCap.Round;
             pn2.EndCap = LineCap.Round;
             for (int i = 1; i < approx.Count; i++)
@@ -86,7 +85,7 @@ namespace OsuAnalyzer.HitObjects
                     b = approx[approx.Count- bee - 2];
                 }
 
-                float rr = 2 * mw.radius - fc / 2;
+                float rr = 2 * (float)mw.radius - fc / 2;
                 double f =boost- ree;
                 float x = (float)(b.X * f + a.X * (1 - f));
                 float y = (float)(b.Y * f + a.Y * (1 - f));
@@ -96,6 +95,7 @@ namespace OsuAnalyzer.HitObjects
             }
 
             initCircle.draw(g, time);
+            base.draw(g, time);
         }
 
         public override Judgement judge(ReplayFrame cf, bool keyDown, bool hit, TimingPoint currentTiming)

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 
 namespace OsuAnalyzer
 {
@@ -50,15 +51,16 @@ namespace OsuAnalyzer
             rp = Parser.ParseReplay(rpPath);
         }
 
-        public float radius;
+        public double radius;
         public double spins_per_second;
         public double hit50, hit100, hit300, hit0;
         public double preempt, fade_in;
 
         private void calcDiff()
         {
-            radius = 54.4f - 4.48f * bm.DifficultySection.CircleSize;
-            radius *= 512 / 640f;//WTF
+            radius = 54.4 - 4.48 * bm.DifficultySection.CircleSize;
+            //radius *= 512 / 640f;//WTF
+           // radius += 1;//even more wtf
 
             double OD = bm.DifficultySection.OverallDifficulty;
             if (OD < 5) spins_per_second = 5 - 2 * (5 - OD) / 5;
@@ -84,21 +86,20 @@ namespace OsuAnalyzer
 
         private void convObjs()
         {
+            //TODO proper stacking algorithm
             var objsL = bm.HitObjects;
-            //TODO stackleniency
-            //Point prevL = new Point(-1,-1);
-            //double off = bm.GeneralSection.StackLeniency;
-            //off = off/Math.Sqrt(2);
-            //Point ch = Point.Empty;
-            //foreach(var obj in objsL)
-            //{
-            //    var kek = obj.Position;
-            //    if (kek == prevL)
-            //    {
-            //        obj.Position = ch=new Point(ch.X+off, ch.Y+off);
-            //    }
-            //    prevL = kek;
-            //}
+            var dst = bm.GeneralSection.StackLeniency;
+            for (int i = objsL.Count - 1; i >= 0;)
+            {
+                Point v = objsL[i].Position;
+                int cnt = 0;
+                while (i >= 0 && objsL[i].Position == v)
+                {
+                    objsL[i].Position = new Point((int)(v.X-cnt*dst), (int)(v.Y-cnt*dst));
+                    cnt++;
+                    i--;
+                }
+            }
 
             objs = objsL.Select<HitObject, HitObjectP>(obj =>
             {
@@ -117,9 +118,9 @@ namespace OsuAnalyzer
 
         public List<int> nxtObjIdx;
         public List<Judgement> judgements;
-        private List<int> badJudgements, 
-            okJudgements ,
-            goodJudgements;
+        public List<Judgement.Bad> badJudgements;
+        public List<Judgement.Ok> okJudgements;
+        public List<Judgement.Good> goodJudgements;
 
         private void addJudgement(Judgement j, int bi, int ri, long time = -1)
         {
@@ -127,9 +128,9 @@ namespace OsuAnalyzer
             j.time = time;
             j.bmIdx = bi;
             objs[bi].judgement = j;
-            if (j is Judgement.Bad) badJudgements.Add(ri);
-            if (j is Judgement.Ok) okJudgements.Add(ri);
-            if (j is Judgement.Good) goodJudgements.Add(ri);
+            if (j is Judgement.Bad) badJudgements.Add(j as Judgement.Bad);
+            if (j is Judgement.Ok) okJudgements.Add(j as Judgement.Ok);
+            if (j is Judgement.Good) goodJudgements.Add(j as Judgement.Good);
             judgements.Add(j);
         }
 
@@ -143,9 +144,9 @@ namespace OsuAnalyzer
             judgements = new List<Judgement>(b.Count);
             nxtObjIdx = new List<int>(r.Count);
 
-            goodJudgements = new List<int>(rp.Count300);
-            okJudgements = new List<int>(rp.Count50 + rp.Count100);
-            badJudgements = new List<int>(rp.CountMiss);
+            goodJudgements = new List<Judgement.Good>(rp.Count300);
+            okJudgements = new List<Judgement.Ok>(rp.Count50 + rp.Count100);
+            badJudgements = new List<Judgement.Bad>(rp.CountMiss);
 
             int bi = 0, ti = -1;
             bool pl = false, pr = false;
