@@ -59,8 +59,6 @@ namespace OsuAnalyzer
         private void calcDiff()
         {
             radius = 54.4 - 4.48 * bm.DifficultySection.CircleSize;
-            //radius *= 512 / 640f;//WTF
-           // radius += 1;//even more wtf
 
             double OD = bm.DifficultySection.OverallDifficulty;
             if (OD < 5) spins_per_second = 5 - 2 * (5 - OD) / 5;
@@ -116,11 +114,12 @@ namespace OsuAnalyzer
             }).ToList();
         }
 
-        public List<int> nxtObjIdx;
+        public List<int> nxtObjIdx, combo;
         public List<Judgement> judgements;
         public List<Judgement.Bad> badJudgements;
         public List<Judgement.Ok> okJudgements;
         public List<Judgement.Good> goodJudgements;
+        private int curCombo = 0;
 
         private void addJudgement(Judgement j, int bi, int ri, long time = -1)
         {
@@ -128,7 +127,16 @@ namespace OsuAnalyzer
             j.time = time;
             j.bmIdx = bi;
             objs[bi].judgement = j;
-            if (j is Judgement.Bad) badJudgements.Add(j as Judgement.Bad);
+            if (j is Judgement.Bad)
+            {
+                curCombo = 0;
+                badJudgements.Add(j as Judgement.Bad);
+            }
+            else
+            {
+                curCombo+=objs[bi].comboBoost();
+            }
+            combo.Add(curCombo);
             if (j is Judgement.Ok) okJudgements.Add(j as Judgement.Ok);
             if (j is Judgement.Good) goodJudgements.Add(j as Judgement.Good);
             judgements.Add(j);
@@ -142,6 +150,7 @@ namespace OsuAnalyzer
             var b = bm.HitObjects;
 
             judgements = new List<Judgement>(b.Count);
+            combo = new List<int>(b.Count);
             nxtObjIdx = new List<int>(r.Count);
 
             goodJudgements = new List<Judgement.Good>(rp.Count300);

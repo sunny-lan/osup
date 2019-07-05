@@ -100,7 +100,29 @@ namespace OsuAnalyzer.HitObjects
 
         public override Judgement judge(ReplayFrame cf, bool keyDown, bool hit, TimingPoint currentTiming)
         {
-            return new Judgement.Good();
+            if (hit)//check only if player taps
+            {
+                var dx = obj.Position.X - cf.X;
+                var dy = obj.Position.Y - cf.Y;
+                var d2 = dy * dy + dx * dx;
+                var r2 = mw.radius * mw.radius;// +5*5;//even more wtf
+                //check only if mouse is on circle
+                if (d2 <= r2)
+                {
+                    var delta = Math.Abs(cf.Time - obj.StartTime);
+                    if (delta <= mw.hit50)
+                        return new Judgement.Good();
+                    else
+                        return new Judgement.Bad.SliderBreak();
+                }
+            }
+            return null;
+        }
+
+        public override int comboBoost()
+        {
+            var beats = obj.PixelLength * obj.Repeats / (100 *mw.bm.DifficultySection.SliderMultiplier);
+            return (int)(mw.bm.DifficultySection.SliderTickRate*beats)+2;
         }
     }
 }

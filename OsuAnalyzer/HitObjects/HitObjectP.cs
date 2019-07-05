@@ -28,6 +28,15 @@ namespace OsuAnalyzer.HitObjects
             TimingPoint currentTiming
         );
 
+        /// <summary>
+        /// gets the amount of combo this is worth if perfectly hit
+        /// </summary>
+        /// <returns>the amount of combo this hititem is worth</returns>
+        public virtual int comboBoost()
+        {
+            return 1;
+        }
+
         //inherited methods
         
         public abstract void draw(Graphics g, long time);
@@ -42,11 +51,15 @@ namespace OsuAnalyzer.HitObjects
             this.mw = mw;
         }
 
+        private long afterClick = 200;
+
         public double getAlpha(long time)
         {
             double st = obj.StartTime - mw.preempt;
             double a = (time - st) / mw.fade_in;
             var dt = deathTime();
+            if (judgement != null)
+                dt = Math.Min(judgement.time+afterClick, dt);
             double fadeOut = 1 - (time - obj.EndTime) / Math.Max(0.1, dt - obj.EndTime);
             //Console.WriteLine($"k={this.GetType()} t={time} f={fadeOut}");
             return Math.Min(Math.Max(Math.Min(a, fadeOut), 0), 1);

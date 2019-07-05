@@ -32,6 +32,7 @@ namespace OsuAnalyzer
         {
             public class NoClick : Bad{ }
             public class Miss : Bad { }
+            public class SliderBreak : Bad { }
         }
     }
 }

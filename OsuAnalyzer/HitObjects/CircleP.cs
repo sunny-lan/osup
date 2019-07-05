@@ -32,20 +32,45 @@ namespace OsuAnalyzer.HitObjects
 
             //approach circle
             Color c = Color.White;
-            var delta = Math.Abs(time - obj.StartTime);
-            if (delta <= mw.hit300)
-                c = mw.th.hit300;
-            else if (delta <= mw.hit100)
-                c = mw.th.hit100;
-            else if (delta <= mw.hit50)
-                c = mw.th.hit50;
+            if (judgement==null  || time < judgement.time)
+            {   
+                var delta = Math.Abs(time - obj.StartTime);
+                c = getJudgementColor(getJudgement(delta));
+            }
             else
-                c = mw.th.miss;
+            {
+                c = getJudgementColor(judgement);
+            }
 
             Pen ap = new Pen(Color.FromArgb(a, c), aw);
             rr = (float)(mw.radius + mw.radius*2 * Math.Max(0, obj.StartTime-time) / mw.preempt - aw / 2);
             g.DrawEllipse(ap, obj.Position.X - rr, obj.Position.Y - rr, rr * 2, rr * 2);
             base.draw(g, time);
+        }
+
+        private Color getJudgementColor(Judgement j)
+        {
+            if (j is Judgement.Good)
+                return mw.th.hit300;
+            else if (j is Judgement.Ok.Timing100)
+                return mw.th.hit100;
+            else if (j is Judgement.Ok.Timing50)
+                return mw.th.hit50;
+            else
+                return mw.th.miss;
+        }
+
+        private Judgement getJudgement(long delta)
+        {
+            if (delta <= mw.hit300)
+                return new Judgement.Good();
+            else if (delta <= mw.hit100)
+                return new Judgement.Ok.Timing100();
+            else if (delta <= mw.hit50)
+                return new Judgement.Ok.Timing50();
+            else if (delta <= mw.hit0)
+                return new Judgement.Bad.Miss();
+            return null;
         }
 
         public override Judgement judge(ReplayFrame cf, bool keyDown, bool hit, TimingPoint currentTiming)
@@ -62,14 +87,7 @@ namespace OsuAnalyzer.HitObjects
                 if (d2 <=r2)
                 {
                     var delta = Math.Abs(cf.Time - obj.StartTime);
-                    if (delta <= mw.hit300)
-                        return new Judgement.Good();
-                    else if (delta <= mw.hit100)
-                        return new Judgement.Ok.Timing100();
-                    else if (delta <= mw.hit50)
-                        return new Judgement.Ok.Timing50();
-                    else if(delta <= mw.hit0)
-                        return new Judgement.Bad.Miss();
+                    return getJudgement(delta);
                 }
             }
             return null;

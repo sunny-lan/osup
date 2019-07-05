@@ -33,6 +33,7 @@ namespace OsuAnalyzer.HitObjects
             Pen pp = null ;
             bool dn=false;
             long lt=-1;
+            int cfIdx = 0;
             while (idx + 1 < frames.Count && frames[idx + 1].Time <= time + postTime)
             {
                 var a = frames[idx];
@@ -59,6 +60,7 @@ namespace OsuAnalyzer.HitObjects
                 if (delta <= mnDelt)
                 {   
                     cf = b;
+                    cfIdx = idx;
                     dn = lhold || rhold;
                     mnDelt = delta;
                     rr = (int)Math.Min(mw.radius/3, Math.Max(0, time - lt));
@@ -72,6 +74,14 @@ namespace OsuAnalyzer.HitObjects
             }
             if (cf != null)
             {
+                //draw combo
+                var pIdx = mw.nxtObjIdx[cfIdx]-1;
+                if (pIdx >= 0)
+                {
+                    var cmb = mw.combo[pIdx];
+                    g.DrawString("x" + cmb, mw.th.debugFont, Brushes.White, 0, 384);
+                }
+                
                 //draw hitcircle
                 if (dn)
                     g.DrawEllipse(pp, cf.X - rr, cf.Y - rr, rr * 2, rr * 2);

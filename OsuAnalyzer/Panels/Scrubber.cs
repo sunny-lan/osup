@@ -34,6 +34,7 @@ namespace OsuAnalyzer.Panels
                 _playing = value;
                 if (value)
                 {
+                    audio.CurrentTime = TimeSpan.FromMilliseconds(time);
                     lstPlay = DateTime.Now;
                     lstTime = time;
                     playTimer.Start();
@@ -109,7 +110,10 @@ namespace OsuAnalyzer.Panels
                 foreach (var bad in mw.badJudgements)
                 {
                     cursorX = timeToCursor(bad.time);
-                    g.DrawLine(mw.th.badIndicator, cursorX, 0, cursorX, Height);
+                    var id = mw.th.badIndicator;
+                    if (bad is Judgement.Bad.SliderBreak)
+                        id = mw.th.breakIndicator;
+                    g.DrawLine(id, cursorX, 0, cursorX, Height);
                 }
 
                 cursorX = timeToCursor(time);
@@ -174,7 +178,6 @@ namespace OsuAnalyzer.Panels
         protected override void OnMouseUp(MouseEventArgs e)
         {
             updateTime(e);
-            audio.CurrentTime = TimeSpan.FromMilliseconds(time);
             mouseDown = false;
         }
 

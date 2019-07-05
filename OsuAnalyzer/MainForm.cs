@@ -52,8 +52,11 @@ namespace OsuAnalyzer
             {
                 var aS = a.Item2;
                 var bS =b.Item2;
+                if (aS.Count == 0) return 1;
+                if (bS.Count == 0) return -1;
                 aS.Sort((x, y) => DateTime.Compare(y.ScoreTimestamp, x.ScoreTimestamp));
                 bS.Sort((x, y) => DateTime.Compare(y.ScoreTimestamp, x.ScoreTimestamp));
+                
                 return DateTime.Compare(bS[0].ScoreTimestamp, aS[0].ScoreTimestamp);
             });
             mapSelect.Items.Clear();
