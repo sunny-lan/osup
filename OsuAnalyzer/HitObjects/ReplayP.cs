@@ -39,10 +39,10 @@ namespace OsuAnalyzer.HitObjects
                 var a = frames[idx];
                 var b = frames[idx + 1];
                 
-                bool lda = (a.StandardKeys & OsuParsers.Enums.StandardKeys.K1) > 0;
-                bool rda = (a.StandardKeys & OsuParsers.Enums.StandardKeys.K2) > 0;
-                bool ldb = (b.StandardKeys & OsuParsers.Enums.StandardKeys.K1) > 0;
-                bool rdb = (b.StandardKeys & OsuParsers.Enums.StandardKeys.K2) > 0;
+                bool lda = (a.StandardKeys & OsuParsers.Enums.Replays.StandardKeys.K1) > 0;
+                bool rda = (a.StandardKeys & OsuParsers.Enums.Replays.StandardKeys.K2) > 0;
+                bool ldb = (b.StandardKeys & OsuParsers.Enums.Replays.StandardKeys.K1) > 0;
+                bool rdb = (b.StandardKeys & OsuParsers.Enums.Replays.StandardKeys.K2) > 0;
 
                 bool ldown = !lda && ldb, rdown = !rda && rdb;
 

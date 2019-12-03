@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using OsuParsers.Decoders;
 
 namespace OsuAnalyzer
 {
@@ -47,8 +48,8 @@ namespace OsuAnalyzer
         {
             var bmPath = Path.Combine(osuRoot, "Songs", dmp.FolderName, dmp.FileName);
             var rpPath = Path.Combine(osuRoot, @"Data\r", $"{dmp.MD5Hash}-{sc.ScoreTimestamp.ToFileTimeUtc()}.osr");
-            bm = Parser.ParseBeatmap(bmPath);
-            rp = Parser.ParseReplay(rpPath);
+            bm = BeatmapDecoder.Decode(bmPath);
+            rp =ReplayDecoder.Decode(rpPath);
         }
 
         public double radius;
@@ -89,11 +90,11 @@ namespace OsuAnalyzer
             var dst = bm.GeneralSection.StackLeniency;
             for (int i = objsL.Count - 1; i >= 0;)
             {
-                Point v = objsL[i].Position;
+                Vector2 v = objsL[i].Position;
                 int cnt = 0;
                 while (i >= 0 && objsL[i].Position == v)
                 {
-                    objsL[i].Position = new Point((int)(v.X-cnt*dst), (int)(v.Y-cnt*dst));
+                    objsL[i].Position = new Vector2((int)(v.X-cnt*dst), (int)(v.Y-cnt*dst));
                     cnt++;
                     i--;
                 }
@@ -163,8 +164,8 @@ namespace OsuAnalyzer
             for (int ri = 0; ri < r.Count; ri++)
             {
                 var cf = r[ri];
-                bool ld = (cf.StandardKeys & OsuParsers.Enums.StandardKeys.K1) > 0;
-                bool rd = (cf.StandardKeys & OsuParsers.Enums.StandardKeys.K2) > 0;
+                bool ld = (cf.StandardKeys & OsuParsers.Enums.Replays.StandardKeys.K1) > 0;
+                bool rd = (cf.StandardKeys & OsuParsers.Enums.Replays.StandardKeys.K2) > 0;
                 bool down = ld || rd;
                 bool lhit = ld && !pl, rhit = rd && !pr;
                 bool hit = lhit || rhit;

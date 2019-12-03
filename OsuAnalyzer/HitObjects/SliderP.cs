@@ -1,6 +1,7 @@
 ﻿using osu.Framework.MathUtils;
 using OsuParsers.Beatmaps.Objects;
 using OsuParsers.Enums;
+using OsuParsers.Enums.Beatmaps;
 using OsuParsers.Replays.Objects;
 using System;
 using System.Collections.Generic;

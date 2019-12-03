@@ -1,6 +1,7 @@
 ﻿using OsuParsers;
 using OsuParsers.Database;
 using OsuParsers.Database.Objects;
+using OsuParsers.Decoders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,7 @@ namespace OsuAnalyzer
         {
             osuRoot = File.ReadAllText(@"osudir.txt");
 
-            osuDb = Parser.ParseOsuDatabase(Path.Combine(osuRoot, @"osu!.db"));
+            osuDb = DatabaseDecoder.DecodeOsu(Path.Combine(osuRoot, @"osu!.db"));
             mapsByHash = new Dictionary<string, DbBeatmap>();
             foreach(var map in osuDb.Beatmaps)
             {
@@ -47,7 +48,7 @@ namespace OsuAnalyzer
         {
             loadReplay.Enabled = false;
             replaySelect.Items.Clear();
-            scoreDb = Parser.ParseScoresDatabase(Path.Combine(osuRoot, "scores.db"));
+            scoreDb = DatabaseDecoder.DecodeScores(Path.Combine(osuRoot, "scores.db"));
             scoreDb.Scores.Sort((a, b) =>
             {
                 var aS = a.Item2;

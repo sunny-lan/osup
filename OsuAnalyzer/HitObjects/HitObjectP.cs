@@ -81,7 +81,7 @@ namespace OsuAnalyzer.HitObjects
             g.DrawString(judgement.GetType().Name, mw.th.debugFont, new SolidBrush(Color.FromArgb(
                 getAlphaInt(time),
                 Color.White
-                )), obj.Position);
+                )), new Point((int)obj.Position.X,(int)obj.Position.Y));
         }
 
 
